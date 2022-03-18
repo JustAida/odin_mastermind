@@ -12,6 +12,9 @@ require "pry-byebug"
 # If codemaker then it'll choose the secret code randomly.
 
 module Mastermind
+  # Red, Green, Blue, Pink, Yellow, Orange
+  COLOURS = %w[R G B P Y O]
+
   # Game class will display the board that contains 12 rows with 4 holes each.
   # It will be played 12 turns, and it'll give information after each guess.
   # Information: Red Pegs indicate correct positions and colours while,
@@ -20,9 +23,6 @@ module Mastermind
   # The secret code will be 4 colours out of 6 colours, for example [R-G-B-P].
   # The colours are [R, G, B, P, Y, O] -> [Red, Green, Blue, Pink, Yellow, Orange].
   class Game
-    # Red, Green, Blue, Pink, Yellow, Orange
-    COLOURS = %w[R G B P Y O]
-
     attr_accessor :turn, :red_pegs, :white_pegs
 
     def initialize(codemaker, codebreaker)
@@ -33,8 +33,8 @@ module Mastermind
       @pegs = []
       @red_pegs = 0
       @white_pegs = 0
-      @codemaker = codemaker
-      @codebreaker = codebreaker
+      @codemaker = codemaker.new(self, true)
+      @codebreaker = codebreaker.new(self, false)
     end
 
     def intro
@@ -46,23 +46,29 @@ module Mastermind
 
     def play
       intro
-      # secret_code = @codemaker.get_secret_code UNCOMMENT THIS LATER
+      @secret_code = @codemaker.secret_code.upcase.chars
       puts "The codemaker has typed in the code."
 
-      until turn == 2
+      until turn == 12
         puts "\nGuess the code."
-        # guess = @codebreaker.get_guess UNCOMMENT THIS LATER
-        guess = "rgbp" # DELETE THIS AFTER
-        update_board(guess)
+        @guess = @codebreaker.guess.upcase.chars
+        puts "\n\nTurn: #{turn + 1}"
+        update_board
         display
         self.turn += 1
+
+        if check_guess
+          puts "\nYou've guessed correctly!"
+          puts "You've won!"
+          exit
+        end
       end
+
+      puts "\nYou've run out of guesses."
     end
 
     def display
-      get_pegs("yyrb", "ryyy") if turn == 0 # DELETE THIS AFTER
-      get_pegs("yyrb", "yyyy") if turn == 1 # DELETE THIS AFTER
-
+      get_pegs
       puts "\nGuesses | Red Pegs | White Pegs |"
       @board.each_with_index do |holes, index|
         next unless index == turn
@@ -75,16 +81,13 @@ module Mastermind
       puts @board_str
     end
 
-    def update_board(guess)
-      guess = guess.upcase.chars
-      @board[turn] = guess
+    def update_board
+      @board[turn] = @guess
     end
 
-    def get_pegs(secret_code, guess)
-      secret_code = secret_code.upcase.chars
-      guess = guess.upcase.chars
-      secret_code_dup = secret_code[0..-1]
-      guess_dup = guess[0..-1]
+    def get_pegs
+      secret_code_dup = @secret_code[0..-1]
+      guess_dup = @guess[0..-1]
 
       # Check for red pegs.
       secret_code_dup, guess_dup = secret_code_and_guess_after_red_pegs(secret_code_dup, guess_dup)
@@ -107,12 +110,41 @@ module Mastermind
     end
 
     # May have to change later.
-    def check_guess(secret_code, guess)
-      secret_code == guess
+    def check_guess
+      @secret_code == @guess
+    end
+  end
+
+  class Player
+    attr_reader :codemaker
+
+    def initialize(game, codemaker)
+      @game = game
+      @codemaker = codemaker
+    end
+
+    def guess
+      guess = gets.chomp
+    end
+
+    def secret_code
+      secret_guess = gets.chomp
+    end
+  end
+
+  class Computer < Player
+    def guess
+      # ADD: Algorithm
+    end
+
+    def secret_code
+      secret_guess = ""
+      4.times { secret_guess += COLOURS.sample }
+      secret_guess
     end
   end
 end
 
-game = Mastermind::Game.new("", "")
+game = Mastermind::Game.new(Mastermind::Computer, Mastermind::Player)
 game.play
 
