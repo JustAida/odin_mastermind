@@ -26,12 +26,37 @@ module Mastermind
 
     def initialize(codemaker, codebreaker)
       @board = Array.new(12) { Array.new(4) }
-      @turn = 12
+      @turn = 0
       @red_pegs = 0
       @white_pegs = 0
+      @codemaker = codemaker
+      @codebreaker = codebreaker
+    end
+
+    def introduction
+      puts "Welcome to Mastermind game!"
+      puts "When guessing the code or making the code you should type only 4 colours."
+      puts "For example, rgbp or RGBP."
+      puts "\nNow it's time for codemaker to type in the code."
+    end
+
+    def play
+      introduction
+      # secret_code = @codemaker.get_secret_code UNCOMMENT THIS LATER
+      puts "The codemaker has typed in the code."
+
+      until turn == 12
+        puts "\nGuess the code."
+        # guess = @codebreaker.get_guess UNCOMMENT THIS LATER
+        guess = "rgbp" # DELETE THIS AFTER
+        update_board(guess)
+        display
+        break
+      end
     end
 
     def display
+      puts ""
       @board.each_with_index do |holes, index|
         break if index > turn
 
@@ -45,8 +70,17 @@ module Mastermind
       puts "White Pegs: #{white_pegs}"
     end
 
+    def update_board(guess)
+      guess = guess.upcase.chars
+      @board[turn] = guess
+    end
+
+    # May have to change later.
+    def check_guess(secret_code, guess)
+      secret_code == guess
+    end
   end
 end
 
 game = Mastermind::Game.new("", "")
-game.display
+game.play
