@@ -87,18 +87,23 @@ module Mastermind
       guess_dup = guess[0..-1]
 
       # Check for red pegs.
-      @red_pegs = 0
-      secret_code_dup.each_with_index do |colour, index|
-        if colour == guess[index]
-          secret_code_dup[index] = nil
-          guess_dup[index] = nil
-          @red_pegs += 1
-        end
-      end
+      secret_code_dup, guess_dup = secret_code_and_guess_after_red_pegs(secret_code_dup, guess_dup)
 
       # Check for white pegs.
       @white_pegs = secret_code_dup.select { |colour| guess_dup.include?(colour) && !colour.nil? }.size
       @pegs[turn] = [@red_pegs, @white_pegs]
+    end
+
+    def secret_code_and_guess_after_red_pegs(secret_code, guess)
+      @red_pegs = 0
+      secret_code.each_with_index do |colour, index|
+        next unless colour == guess[index]
+
+        secret_code[index] = nil
+        guess[index] = nil
+        @red_pegs += 1
+      end
+      [secret_code, guess]
     end
 
     # May have to change later.
