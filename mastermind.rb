@@ -16,3 +16,37 @@
 # Computer class will have two roles as well, codebreaker or codemaker.
 # If codebreaker then it'll try to guess the code using an algorithm.
 # If codemaker then it'll choose the secret code randomly.
+
+module Mastermind
+  class Game
+    # Red, Green, Blue, Pink, Yellow, Orange
+    COLOURS = %w[R G B P Y O]
+
+    attr_accessor :turn, :red_pegs, :white_pegs
+
+    def initialize(codemaker, codebreaker)
+      @board = Array.new(12) { Array.new(4) }
+      @turn = 12
+      @red_pegs = 0
+      @white_pegs = 0
+    end
+
+    def display
+      @board.each_with_index do |holes, index|
+        break if index > turn
+
+        holes.each_with_index do |hole, hole_index|
+          hole.nil? ? print(".") : print(hole)
+          hole_index == 3 ? print("\n") : print("-")
+        end
+      end
+
+      puts "\nRed Pegs: #{red_pegs}"
+      puts "White Pegs: #{white_pegs}"
+    end
+
+  end
+end
+
+game = Mastermind::Game.new("", "")
+game.display
