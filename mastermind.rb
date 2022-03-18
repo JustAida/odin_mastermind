@@ -42,29 +42,33 @@ module Mastermind
       puts "When guessing the code or making the code you should type only 4 colours."
       puts "For example, rgbp or RGBP."
       puts "\nNow it's time for codemaker to type in the code."
+      @secret_code = @codemaker.secret_code.upcase.chars
+      puts "The codemaker has typed in the code."
     end
 
     def play
       intro
-      @secret_code = @codemaker.secret_code.upcase.chars
-      puts "The codemaker has typed in the code."
-
       until turn == 12
-        puts "\nGuess the code."
-        @guess = @codebreaker.guess.upcase.chars
+        get_guess
         puts "\n\nTurn: #{turn + 1}"
         update_board
         display
         self.turn += 1
-
-        if check_guess
-          puts "\nYou've guessed correctly!"
-          puts "You've won!"
-          exit
-        end
+        win_messages if check_guess
       end
 
       puts "\nYou've run out of guesses."
+    end
+
+    def get_guess
+      puts "\nGuess the code."
+      @guess = @codebreaker.guess.upcase.chars
+    end
+
+    def win_messages
+      puts "\nYou've guessed correctly!"
+      puts "You've won!"
+      exit
     end
 
     def display
@@ -109,7 +113,6 @@ module Mastermind
       [secret_code, guess]
     end
 
-    # May have to change later.
     def check_guess
       @secret_code == @guess
     end
@@ -147,4 +150,3 @@ end
 
 game = Mastermind::Game.new(Mastermind::Computer, Mastermind::Player)
 game.play
-
