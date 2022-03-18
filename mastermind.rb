@@ -1,5 +1,3 @@
-require "pry-byebug"
-
 # Make Mastermind module that contains 3 classes: Game, Player, Computer
 
 # Player class will have to guess the code until it matches or run out of guesses.
@@ -115,6 +113,10 @@ module Mastermind
 
     def check_guess
       @secret_code == @guess
+    end
+
+    # ADD: A method to check for validity of a guess input.
+    def valid_guess?
     end
   end
 
