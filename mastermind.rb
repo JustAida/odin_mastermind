@@ -45,11 +45,13 @@ module Mastermind
     def intro
       puts "\nWelcome to Mastermind game!"
       puts "\nRules of the game:"
+      puts "- Colours are: #{COLOURS}"
       puts "- Red Pegs indicate correct positions and colours."
       puts "- White Pegs indicate correct colours but not the positions."
       puts "- When guessing the code or making the code you should type only 4 colours."
       puts "- For example, rgbp or RGBP. [Duplicates are allowed but not blanks.]"
       puts "\nNow it's time for the Codemaker to choose the code."
+      p COLOURS
       get_secret_code
     end
 
@@ -79,7 +81,7 @@ module Mastermind
 
     def get_guess
       loop do
-        puts "\nGuess the code."
+        puts "\nGuess the code. #{COLOURS}"
         @guess = @codebreaker.guess.upcase.chars
         break if valid_code?(@guess)
       end
