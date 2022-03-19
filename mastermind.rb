@@ -29,8 +29,11 @@ module Mastermind
 
     def intro
       puts "Welcome to Mastermind game!"
-      puts "When guessing the code or making the code you should type only 4 colours."
-      puts "For example, rgbp or RGBP."
+      puts "\nRules of the game:"
+      puts "- Red Pegs indicate correct positions and colours."
+      puts "- White Pegs indicate correct colours but not the positions."
+      puts "- When guessing the code or making the code you should type only 4 colours."
+      puts "- For example, rgbp or RGBP. [Duplicates are allowed but not blanks.]"
       puts "\nNow it's time for codemaker to type in the code."
       loop do
         @secret_code = @codemaker.secret_code.upcase.chars
