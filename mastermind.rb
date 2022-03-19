@@ -23,25 +23,41 @@ module Mastermind
       @pegs = []
       @red_pegs = 0
       @white_pegs = 0
+      roll = choose_role
       @codemaker = codemaker.new(self, true)
       @codebreaker = codebreaker.new(self, false)
+      # Swap roles if the player choose to be codemaker instead.
+      @codemaker, @codebreaker = @codebreaker, @codemaker if roll == 2
+    end
+
+    def choose_role
+      puts "Choose the role [Type number only]."
+      puts "1. Codemaker"
+      puts "2. Codebreaker"
+      role = ""
+      loop do
+        role = gets.chomp.to_i
+        break if [1, 2].include?(role)
+      end
+      role
     end
 
     def intro
-      puts "Welcome to Mastermind game!"
+      puts "\nWelcome to Mastermind game!"
       puts "\nRules of the game:"
       puts "- Red Pegs indicate correct positions and colours."
       puts "- White Pegs indicate correct colours but not the positions."
       puts "- When guessing the code or making the code you should type only 4 colours."
       puts "- For example, rgbp or RGBP. [Duplicates are allowed but not blanks.]"
-      puts "\nNow it's time for codemaker to type in the code."
+      puts "\nNow it's time for the Codemaker to choose the code."
       loop do
         @secret_code = @codemaker.secret_code.upcase.chars
         break if valid_code?(@secret_code)
 
         puts "Please type the valid secret code."
       end
-      puts "The codemaker has chosen the code."
+      sleep 1
+      puts "The Codemaker has chosen the code."
     end
 
     def play
@@ -67,8 +83,8 @@ module Mastermind
     end
 
     def win_messages
-      puts "\nYou've guessed correctly!"
-      puts "You've won!"
+      puts "\nThe Codebreaker guessed correctly!"
+      puts "The Codebreaker has won!"
       exit
     end
 
