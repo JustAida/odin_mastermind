@@ -50,14 +50,7 @@ module Mastermind
       puts "- When guessing the code or making the code you should type only 4 colours."
       puts "- For example, rgbp or RGBP. [Duplicates are allowed but not blanks.]"
       puts "\nNow it's time for the Codemaker to choose the code."
-      loop do
-        @secret_code = @codemaker.secret_code.upcase.chars
-        break if valid_code?(@secret_code)
-
-        puts "Please type the valid secret code."
-      end
-      sleep 1
-      puts "The Codemaker has chosen the code."
+      get_secret_code
     end
 
     def play
@@ -72,6 +65,16 @@ module Mastermind
       end
 
       puts "\nYou've run out of guesses."
+    end
+
+    def get_secret_code
+      loop do
+        @secret_code = @codemaker.secret_code.upcase.chars
+        break if valid_code?(@secret_code)
+
+        puts "Please type the valid secret code."
+      end
+      puts "The Codemaker has chosen the code."
     end
 
     def get_guess
