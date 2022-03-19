@@ -1,14 +1,5 @@
 # Make Mastermind module that contains 3 classes: Game, Player, Computer
 
-# Player class will have to guess the code until it matches or run out of guesses.
-# It can also decide whether to be the codemaker or codebreaker.
-# If codemaker is chosen then it'll ask for the secret code.
-# If codebreaker is chosen then it'll ask for the guesses.
-
-# Computer class will have two roles as well, codebreaker or codemaker.
-# If codebreaker then it'll try to guess the code using an algorithm.
-# If codemaker then it'll choose the secret code randomly.
-
 module Mastermind
   # Red, Green, Blue, Pink, Yellow, Orange
   COLOURS = %w[R G B P Y O]
@@ -134,6 +125,10 @@ module Mastermind
     end
   end
 
+  # Player class will have to guess the code until it matches or run out of guesses.
+  # It can be the codemaker or codebreaker.
+  # If codemaker is chosen then it'll ask for the secret code.
+  # If codebreaker is chosen then it'll ask for the guesses.
   class Player
     attr_reader :codemaker
 
@@ -151,6 +146,9 @@ module Mastermind
     end
   end
 
+  # Computer class will have two roles as well, codebreaker or codemaker.
+  # If codebreaker then it'll try to guess the code using an algorithm.
+  # If codemaker then it'll choose the secret code randomly.
   class Computer < Player
     def initialize(game, codemaker)
       super(game, codemaker)
