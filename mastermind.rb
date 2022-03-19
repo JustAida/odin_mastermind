@@ -22,6 +22,7 @@ module Mastermind
   # The colours are [R, G, B, P, Y, O] -> [Red, Green, Blue, Pink, Yellow, Orange].
   class Game
     attr_accessor :turn, :red_pegs, :white_pegs
+    attr_reader :pegs
 
     def initialize(codemaker, codebreaker)
       @board = Array.new(12) { Array.new(4) }
@@ -47,6 +48,7 @@ module Mastermind
     def play
       intro
       until turn == 12
+        p @secret_code # DELETE AFTER
         get_guess
         puts "\n\nTurn: #{turn + 1}"
         update_board
@@ -70,7 +72,7 @@ module Mastermind
     end
 
     def display
-      get_pegs
+      get_pegs(@secret_code, @guess, true)
       puts "\nGuesses | Red Pegs | White Pegs |"
       @board.each_with_index do |holes, index|
         next unless index == turn
@@ -87,16 +89,17 @@ module Mastermind
       @board[turn] = @guess
     end
 
-    def get_pegs
-      secret_code_dup = @secret_code[0..-1]
-      guess_dup = @guess[0..-1]
+    def get_pegs(secret_code, guess, store_pegs)
+      secret_code_dup = secret_code[0..-1]
+      guess_dup = guess[0..-1]
 
       # Check for red pegs.
       secret_code_dup, guess_dup = secret_code_and_guess_after_red_pegs(secret_code_dup, guess_dup)
 
       # Check for white pegs.
       check_white_pegs(secret_code_dup, guess_dup)
-      @pegs[turn] = [@red_pegs, @white_pegs]
+      @pegs[turn] = [@red_pegs, @white_pegs] if store_pegs
+      [red_pegs, white_pegs]
     end
 
     def secret_code_and_guess_after_red_pegs(secret_code, guess)
@@ -149,8 +152,29 @@ module Mastermind
   end
 
   class Computer < Player
+    def initialize(game, codemaker)
+      super(game, codemaker)
+      return if codemaker
+
+      @computer_guess = "rrgg"
+      @all_codes = []
+      COLOURS.repeated_permutation(4) { |code| @all_codes << code }
+      @possible_codes = @all_codes[0..-1]
+    end
+
+    def remove_possible_codes
+      @possible_codes = @possible_codes.select do |code|
+        red_pegs, white_pegs = @game.get_pegs(@computer_guess.upcase.chars, code, false)
+        @game.pegs[@game.turn - 1] == [red_pegs, white_pegs]
+      end
+    end
+
     def guess
-      # ADD: Algorithm
+      return @computer_guess if @game.turn == 0
+
+      remove_possible_codes
+      p @possible_codes[0]
+      @computer_guess = @possible_codes[0].join("")
     end
 
     def secret_code
@@ -161,5 +185,5 @@ module Mastermind
   end
 end
 
-game = Mastermind::Game.new(Mastermind::Computer, Mastermind::Player)
+game = Mastermind::Game.new(Mastermind::Player, Mastermind::Computer)
 game.play
