@@ -32,8 +32,13 @@ module Mastermind
       puts "When guessing the code or making the code you should type only 4 colours."
       puts "For example, rgbp or RGBP."
       puts "\nNow it's time for codemaker to type in the code."
-      @secret_code = @codemaker.secret_code.upcase.chars
-      puts "The codemaker has typed in the code."
+      loop do
+        @secret_code = @codemaker.secret_code.upcase.chars
+        break if valid_code?(@secret_code)
+
+        puts "Please type the valid secret code."
+      end
+      puts "The codemaker has chosen the code."
     end
 
     def play
@@ -51,8 +56,11 @@ module Mastermind
     end
 
     def get_guess
-      puts "\nGuess the code."
-      @guess = @codebreaker.guess.upcase.chars
+      loop do
+        puts "\nGuess the code."
+        @guess = @codebreaker.guess.upcase.chars
+        break if valid_code?(@guess)
+      end
     end
 
     def win_messages
@@ -120,8 +128,8 @@ module Mastermind
       @secret_code == @guess
     end
 
-    # ADD: A method to check for validity of a guess input.
-    def valid_guess?
+    def valid_code?(code)
+      code.all? { |char| COLOURS.include?(char) } && code.length == 4
     end
   end
 
