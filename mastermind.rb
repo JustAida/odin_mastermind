@@ -48,7 +48,6 @@ module Mastermind
     def play
       intro
       until turn == 12
-        p @secret_code # DELETE AFTER
         get_guess
         puts "\n\nTurn: #{turn + 1}"
         update_board
@@ -89,6 +88,7 @@ module Mastermind
       @board[turn] = @guess
     end
 
+    # Computer class will use this for calculation to get a guess.
     def get_pegs(secret_code, guess, store_pegs)
       secret_code_dup = secret_code[0..-1]
       guess_dup = guess[0..-1]
