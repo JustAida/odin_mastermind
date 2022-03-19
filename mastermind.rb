@@ -156,25 +156,26 @@ module Mastermind
       super(game, codemaker)
       return if codemaker
 
-      @computer_guess = "rrgg"
-      @all_codes = []
-      COLOURS.repeated_permutation(4) { |code| @all_codes << code }
-      @possible_codes = @all_codes[0..-1]
+      @computer_guess = "RRGG"
+      @possible_codes = []
+      COLOURS.repeated_permutation(4) { |code| @possible_codes << code }
     end
 
     def remove_possible_codes
       @possible_codes = @possible_codes.select do |code|
+        # Use current guess as a secret code and only select the codes that has the same amount of red and white pegs.
         red_pegs, white_pegs = @game.get_pegs(@computer_guess.upcase.chars, code, false)
         @game.pegs[@game.turn - 1] == [red_pegs, white_pegs]
       end
     end
 
     def guess
-      return @computer_guess if @game.turn == 0
-
-      remove_possible_codes
-      p @possible_codes[0]
-      @computer_guess = @possible_codes[0].join("")
+      unless @game.turn == 0
+        remove_possible_codes
+        @computer_guess = @possible_codes[@possible_codes.length / 2 - 1].join("")
+      end
+      p @computer_guess
+      @computer_guess
     end
 
     def secret_code
