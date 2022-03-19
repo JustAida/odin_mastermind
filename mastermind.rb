@@ -52,7 +52,7 @@ module Mastermind
         update_board
         display
         self.turn += 1
-        win_messages if check_guess
+        win_messages if correct_guess?
       end
 
       puts "\nYou've run out of guesses."
@@ -95,7 +95,7 @@ module Mastermind
       secret_code_dup, guess_dup = secret_code_and_guess_after_red_pegs(secret_code_dup, guess_dup)
 
       # Check for white pegs.
-      @white_pegs = secret_code_dup.select { |colour| guess_dup.include?(colour) && !colour.nil? }.size
+      check_white_pegs(secret_code_dup, guess_dup)
       @pegs[turn] = [@red_pegs, @white_pegs]
     end
 
@@ -111,7 +111,18 @@ module Mastermind
       [secret_code, guess]
     end
 
-    def check_guess
+    def check_white_pegs(secret_code, guess)
+      @white_pegs = secret_code.reduce(0) do |count, colour|
+        if guess.include?(colour) && !colour.nil?
+          guess[guess.index(colour)] = nil
+          count += 1
+        else
+          count
+        end
+      end
+    end
+
+    def correct_guess?
       @secret_code == @guess
     end
 
